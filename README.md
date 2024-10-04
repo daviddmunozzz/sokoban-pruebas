@@ -1,7 +1,7 @@
 # SOKOBAN
 Repositorio base para el laboratorio de sistemas inteligentes 2024/25
 
-**Nombre y Apellidos**
+**David Muñoz Escribano**
 
 ### Esquema de carpetas
 - sokoban
