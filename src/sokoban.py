@@ -7,7 +7,7 @@
 
 '''
 from parser import get_parser # Import the get_parser method from the parser module
-from task1 import Map         # Import the Map class from the task1 module
+from map import Map           # Import the Map class from the map module
 
 '''
     Method name: sokoban_exec
@@ -24,11 +24,13 @@ def sokoban_exec() -> None:
     # Replace \n from the level string by carriage return in code
     level = args.level.replace('\\n', '\n')
     
+    # Create the map object and make the map
+    map = Map(level)   
+    map.make_map()     
+
     # Check the task to execute
     if args.task == 'T1':
-        map = Map(level)        # Create the map object
-        map.make_map()          # Make the map
-        print(map.to_String())  # Print the map
+        map.show_map_elements()
 
 ''' 
     Main method to execute the sokoban game

@@ -1,5 +1,5 @@
 '''
-    Module Name: task1
+    Module Name: map
     Author name: David Muñoz Escribano
     Realase: 08-10-2024
     Module version: 1.0
@@ -8,6 +8,14 @@
 
 '''
 import hashlib  # Import the hashlib module to use the MD5 algorithm
+
+'''
+    Method Name: hashMD5
+    Description: Method to generate the hash of the level using the MD5 algorithm
+    Return value: str, hash of the level
+'''
+def hashMD5(string) -> str:
+    return (hashlib.md5(str(string).encode()).hexdigest()).upper()
 
 '''
     Class Name: Map
@@ -35,14 +43,8 @@ class Map:
         self.boxList = []        # List of boxes ($)
         self.targetList = []     # List of targets (.)
 
-    '''
-        Method Name: hashMD5
-        Description: Method to generate the hash of the level using the MD5 algorithm
-        Return value: None
-    '''
-    def hashMD5(self) -> None:  
-        string = (str(self.player) + str(self.boxList)).replace(' ', '')    # Concatenate the player position and the box list
-        self.ID = (hashlib.md5(str(string).encode()).hexdigest()).upper() # Generate the hash, convert to uppercase and store it in the ID attribute
+        self.map = []            # Map of the game
+
     '''
         Method Name: define_grid
         Name of the original author: David Muñoz Escribano
@@ -113,21 +115,23 @@ class Map:
                 elif self.level[w] == ' ':
                     grid[i][j] = self.level[w]    
                     j += 1
-        # Now the instance has the position of the player and boxes and can hash the level
-        self.hashMD5()
+
+        # Save the grid in the map instance variable
+        self.map = grid  
+        # Generate the hash ID of the level
+        self.ID = hashMD5((str(self.player) + str(self.boxList)).replace(' ', ''))
 
     '''
-        Method Name: to_String
+        Method Name: show_map_elements
         Name of original author: David Muñoz Escribano
         Description: Method to print the map of the game
         Return value: str, summary of the map
     '''
-    def to_String(self) -> str:
-        return ("ID:" + self.ID + 
-                "\nRows:" + str(self.rows) +
-                "\nColumns:" + str(self.columns) +
-                "\nWalls:" + str(self.wallList) +
-                "\nTargets:" + str(self.targetList) +
-                "\nPlayer:" + str(self.player) +
-                "\nBoxes:" + str(self.boxList) + "\n").replace(' ', '')
-                
+    def show_map_elements(self) -> str:
+        print(("ID:" + self.ID + 
+            "\nRows:" + str(self.rows) +
+            "\nColumns:" + str(self.columns) +  
+            "\nWalls:" + str(self.wallList) +
+            "\nTargets:" + str(self.targetList) +
+            "\nPlayer:" + str(self.player) +
+            "\nBoxes:" + str(self.boxList) + "\n").replace(' ', ''))                
