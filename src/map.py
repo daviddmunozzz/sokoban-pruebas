@@ -125,7 +125,7 @@ class Map:
         Method Name: show_map_elements
         Name of original author: David Muñoz Escribano
         Description: Method to print the map of the game
-        Return value: str, summary of the map
+        Return value: None
     '''
     def show_map_elements(self) -> str:
         print(("ID:" + self.ID + 
@@ -135,3 +135,150 @@ class Map:
             "\nTargets:" + str(self.targetList) +
             "\nPlayer:" + str(self.player) +
             "\nBoxes:" + str(self.boxList) + "\n").replace(' ', ''))                
+
+    '''
+        Method Name: successors
+        Name of the original author: David Muñoz Escribano
+        Description: Method to generate the successors of the actual state of the game, it checks the possible movements
+        of the mutable elements (player and boxes) and stores them in a list of tuples with the direction, the hash of the 
+        new state and cost. 
+        The get_moves method returns a list of tuples <direction, successor(i,j), actual(i,j)>, e.g. ('U',(i-2,j),(i-1,j))
+        In case of boxes, it is necessary to update the position of each box in the boxList, the current position will be 
+        the player position and the successor position will be the new position of the box, in the player case, the successor
+        position will be the new position of the player, and boxes will remain the same.
+        Return value: list of successors by tuple <direction, new state, cost>
+    '''
+    def successors(self) -> list:
+        movements = self.get_moves()
+        successors = [] 
+        boxList_successors = self.boxList.copy()
+        cost = 1
+        for move in movements:
+            if move[0].isupper():
+                if move[0] == 'U':
+                    it = self.get_index(move[2])           # Get the index of the box in the boxList
+                    boxList_successors[it] = move[1]       # Replace the actual position of the box by the new position
+                    successors.append((move[0], hashMD5((str(move[2]) + str(boxList_successors)).replace(' ', '')), cost))
+                elif move[0] == 'R':
+                    it = self.get_index(move[2])
+                    boxList_successors[it] = move[1]
+                    successors.append((move[0], hashMD5((str(move[2]) + str(boxList_successors)).replace(' ', '')), cost))
+                elif move[0] == 'D':
+                    it = self.get_index(move[2])
+                    boxList_successors[it] = move[1]
+                    successors.append((move[0], hashMD5((str(move[2]) + str(boxList_successors)).replace(' ', '')), cost))
+                elif move[0] == 'L':
+                    it = self.get_index(move[2])
+                    boxList_successors[it] = move[1]
+                    successors.append((move[0], hashMD5((str(move[2]) + str(boxList_successors)).replace(' ', '')), cost))
+            else:
+                successors.append((move[0], hashMD5((str(move[1]) + str(self.boxList)).replace(' ', '')), cost))
+        return successors
+
+    ''' 
+        Method Name: get_index
+        Name of the original author: David Muñoz Escribano
+        Description: This method return the index that match with the movement
+        Return value: int, index of the move in the boxList
+    '''
+    def get_index(self, move) -> int:
+        try:
+            return self.boxList.index(move)
+        except ValueError:
+            return -1
+
+    '''
+        Method Name: get_moves
+        Name of the original author: David Muñoz Escribano
+        Description: Method that returns the possible movements of the player and boxes, they differ in the first element
+        in tuple (upper case for boxes and lower case for player). First of all it checks in the directions that it is possible
+        to move, if in that direction there is a box, check again if it is possible to move the box in that direction.
+        The order of the movements is Up, Right, Down and Left <u|U|r|R|d|D|l|L>.
+        Return value: list of tuples <direction, successor(i,j), actual(i,j)>
+    '''
+    def get_moves(self):
+        i = self.player[0]
+        j = self.player[1]
+        is_box = [False] # Boolean in a list to make it mutable
+        movements = []   # Tuple: <direction, suc(i,j), actual(i,j)>
+
+        # Check Up
+        if self.check_moves(i-1, j, is_box):
+            if is_box[0]:                                      
+                if self.check_moves(i-2, j, is_box):
+                    movements.append(('U', (i-2, j), (i-1, j)))
+            else:
+                movements.append(('u', (i-1, j), (i, j)))
+            is_box[0] = False
+        # Check Right
+        if self.check_moves(i, j+1, is_box): 
+            if is_box[0]:
+                if self.check_moves(i, j+2, is_box):
+                    movements.append(('R', (i, j+2), (i, j+1)))
+            else:
+                movements.append(('r', (i, j+1), (i, j)))
+            is_box[0] = False
+        # Check Down
+        if self.check_moves(i+1, j, is_box):
+            if is_box[0]:
+                if self.check_moves(i+2, j, is_box):
+                    movements.append(('D', (i+2, j), (i+1, j)))
+            else:
+                movements.append(('d', (i+1, j), (i, j)))
+            is_box[0] = False
+        # Check Left
+        if self.check_moves(i, j-1, is_box):
+            if is_box[0]:
+                if self.check_moves(i, j-2, is_box):
+                    movements.append(('L', (i, j-2), (i, j-1)))
+            else:
+                movements.append(('l', (i, j-1), (i, j)))
+            is_box[0] = False
+
+        return movements
+
+    '''
+        Method Name: check_moves
+        Name of the original author: David Muñoz Escribano
+        Description: Method to check if it is possible to move in the direction i,j. It checks if the position is an empty space,
+        a target, a box or a box in target, that are the mutable elements of the game.
+        Return value: bool, True if it is possible to move, False otherwise
+    '''
+    def check_moves(self, i, j, is_box) -> bool:
+        try:
+            if self.map[i][j] in (' ', '.'):
+                return True
+            elif self.map[i][j] in ('$', '*'):
+                is_box[0] = True
+                return True
+        except IndexError:
+            return False
+        return False
+
+    '''
+        Method Name: show_successors
+        Name of the original author: David Muñoz Escribano
+        Description: Method to print the successors of the actual state of the game
+        Return value: None
+    '''
+    def show_successors(self) -> None:
+        print("ID:" + self.ID)
+        for successor in self.successors():
+            print(str(successor).replace('(', '[').replace(')', ']').replace(' ', ''))
+    
+    '''
+        Method Name: objective
+        Name of the original author: David Muñoz Escribano
+        Description: Method to check if the level is resolved, it iterates in the map and if it finds a '.' (target) it means that
+        the level is not resolved.
+        Return value: None
+    '''
+    def objective(self) -> None:
+        resolved = True
+        for position in self.map:
+            for element in position:
+                if element == '.':
+                    resolved = False
+        print(str(resolved).upper())
+        
+                                   
