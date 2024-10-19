@@ -31,6 +31,11 @@ def sokoban_exec() -> None:
     # Check the task to execute
     if args.task == 'T1':
         map.show_map_elements()
+    elif args.task == 'T2S':
+        map.show_successors()
+    elif args.task == 'T2T':
+        map.objective()
+
 
 ''' 
     Main method to execute the sokoban game
