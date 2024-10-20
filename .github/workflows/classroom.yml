@@ -31,10 +31,20 @@ jobs:
         command: "./sokoban-test/test.sh  T2S ./sokoban-test/n2.txt ./sokoban-test/o2T2S.txt"
         timeout: 10
         max-score: 1
+    - name: T2T
+      id: t2t
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: T2T
+        setup-command: ''
+        command: "./sokoban-test/test.sh  T2T ./sokoban-test/n3.txt ./sokoban-test/o3T2T.txt"
+        timeout: 10
+        max-score: 1
     - name: Autograding Reporter
       uses: classroom-resources/autograding-grading-reporter@v1
       env:
         T1_RESULTS: "${{steps.t1.outputs.result}}"
         T2S_RESULTS: "${{steps.t2s.outputs.result}}"
+        T2T_RESULTS: "${{steps.t2t.outputs.result}}"
       with:
-        runners: t1,t2s
+        runners: t1,t2s,t2t
