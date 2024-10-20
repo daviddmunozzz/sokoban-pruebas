@@ -22,9 +22,19 @@ jobs:
         command: 'sokoban-test/test.sh T1 sokoban-test/n2.txt sokoban-test/o2T1.txt '
         timeout: 4
         max-score: 1
+    - name: T2S
+      id: t2s
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: T2S
+        setup-command: ''
+        command: "./sokoban-test/test.sh  T2S ./sokoban-test/n2.txt ./sokoban-test/o2T2S.txt"
+        timeout: 10
+        max-score: 1
     - name: Autograding Reporter
       uses: classroom-resources/autograding-grading-reporter@v1
       env:
         T1_RESULTS: "${{steps.t1.outputs.result}}"
+        T2S_RESULTS: "${{steps.t2s.outputs.result}}"
       with:
-        runners: t1
+        runners: t1,t2s
