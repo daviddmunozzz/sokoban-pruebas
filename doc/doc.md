@@ -13,14 +13,13 @@ Es el encargado de parsear las opciones y parametros para encapsularlos en un ob
 * map.py
 El módulo que contiene la clase Map, dónde se desarrollan las funcionalidades del proyecto.  
   - Map    
-  `__init__`: Es el método constructor, requiere del parámetro "level" para inicializarse, al crear un objeto Map se inicializan los atributos `level`, `ID`, `rows`, `columns`, `wallList`,`player`, `boxList`, `targetList` y `map`.  
+    * `__init__`: Es el método constructor, requiere del parámetro "level" para inicializarse, al crear un objeto Map se inicializan los atributos `level`, `ID`, `rows`, `columns`, `wallList`,`player`, `boxList`, `targetList` y `map`.  
 
-    `define_grid`: Cuenta el número de filas y columnas que tiene el nivel y retorna un grid inicializado con todas las posiciones a ' '. Cada caracter encontrado hasta el salto de línea (\n) es una columna, por lo tanto el número de columnas (NC) se incrementa en 1; por cada salto de línea se incrementa en 1 el número de filas (NR), también en cada salto se compara el número de columnas contado en esa iteración con el almacenado, en caso de ser mayor, se almacena en la variable maxNC. De esta manera se define un grid para no dejar ningún carácter fuera de límites.
+    * `define_grid`: Cuenta el número de filas y columnas que tiene el nivel y retorna un grid inicializado con todas las posiciones a ' '. Cada caracter encontrado hasta el salto de línea (\n) es una columna, por lo tanto el número de columnas (NC) se incrementa en 1; por cada salto de línea se incrementa en 1 el número de filas (NR), también en cada salto se compara el número de columnas contado en esa iteración con el almacenado, en caso de ser mayor, se almacena en la variable maxNC. De esta manera se define un grid para no dejar ningún carácter fuera de límites.
   
-    `make_level`: En primera instancia llama al método `define_grid`, posteriormente itera sobre la cadena 'level', diferenciando los caracteres
-    asignandoles una posición (i,j) en el grid y almacenando algunas de sus posiciones en los atributos del objeto. Por último almacena el resultado en el atributo map y genera un identificador del nivel.
+    * `make_level`: En primera instancia llama al método `define_grid`, posteriormente itera sobre la cadena 'level', diferenciando los caracteres, asignandoles una posición (i,j) en el grid y almacenando sus posiciones en los atributos del objeto. Por último almacena el resultado en el atributo map y genera un identificador del nivel.
   
-    `show_map_elements`: Imprime por pantalla el identificador del nivel y las posiciones de los diferentes elementos que lo componen.
+    * `show_map_elements`: Imprime por pantalla el identificador del nivel y las posiciones de los diferentes elementos que lo componen.
 
 ## Tarea 2
 El objetivo de esta tarea es identificar la función sucesor del jugador y de las cajas. Las nuevas funcionalidades se añaden en `map.py` y se descubren añadiendo la opción 'T2S' y 'T2T' en el argumento task del juego.
@@ -37,4 +36,4 @@ pone a True la variable *is_box* para que compruebe si se puede mover la caja. E
 
 ### T2T
 La meta de esta tarea es mostrar el resultado de la función OBJETIVO para el nivel. Se ha desarrollado el método `objective`.
-* `objective`, comprueba que no exista ningún objetivo en el nivel, en caso de que exista algún '.' se considerará que el objetivo no está cumplido. Muestra por pantalla el resultado.
+* `objective`, comprueba que no exista ningún objetivo en el nivel, en caso de que exista alguna caja ('$') se considerará que el objetivo no está cumplido. Muestra por pantalla el resultado.

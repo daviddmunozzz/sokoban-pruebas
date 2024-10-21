@@ -155,23 +155,26 @@ class Map:
     def successors(self) -> list:
         movements = self.get_moves()
         successors = [] 
-        boxList_successors = self.boxList.copy()
         cost = 1
         for move in movements:
             if move[0].isupper():
                 if move[0] == 'U':
+                    boxList_successors = self.boxList.copy()
                     it = self.get_index(move[2])           # Get the index of the box in the boxList
                     boxList_successors[it] = move[1]       # Replace the actual position of the box by the new position
                     successors.append((move[0], hashMD5((str(move[2]) + str(boxList_successors)).replace(' ', '')), cost))
                 elif move[0] == 'R':
+                    boxList_successors = self.boxList.copy()
                     it = self.get_index(move[2])
                     boxList_successors[it] = move[1]
                     successors.append((move[0], hashMD5((str(move[2]) + str(boxList_successors)).replace(' ', '')), cost))
                 elif move[0] == 'D':
+                    boxList_successors = self.boxList.copy()
                     it = self.get_index(move[2])
                     boxList_successors[it] = move[1]
                     successors.append((move[0], hashMD5((str(move[2]) + str(boxList_successors)).replace(' ', '')), cost))
                 elif move[0] == 'L':
+                    boxList_successors = self.boxList.copy()
                     it = self.get_index(move[2])
                     boxList_successors[it] = move[1]
                     successors.append((move[0], hashMD5((str(move[2]) + str(boxList_successors)).replace(' ', '')), cost))
