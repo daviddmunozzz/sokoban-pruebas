@@ -108,6 +108,7 @@ class Map:
                     j += 1
                 elif self.level[w] == '*':          
                     grid[i][j] = self.level[w]
+                    self.boxList.append((i,j))
                     j += 1
                 elif self.level[w] == '+':
                     grid[i][j] = self.level[w]
