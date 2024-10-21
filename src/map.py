@@ -109,9 +109,12 @@ class Map:
                 elif self.level[w] == '*':          
                     grid[i][j] = self.level[w]
                     self.boxList.append((i,j))
+                    self.targetList.append((i,j))
                     j += 1
                 elif self.level[w] == '+':
                     grid[i][j] = self.level[w]
+                    self.player = (i, j)
+                    self.targetList.append((i, j))
                     j += 1
                 elif self.level[w] == ' ':
                     grid[i][j] = self.level[w]    
