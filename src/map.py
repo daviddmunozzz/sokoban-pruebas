@@ -130,12 +130,12 @@ class Map:
     '''
     def show_map_elements(self) -> str:
         print(("ID:" + self.ID + 
-            "\nRows:" + str(self.rows) +
-            "\nColumns:" + str(self.columns) +  
-            "\nWalls:" + str(self.wallList) +
-            "\nTargets:" + str(self.targetList) +
-            "\nPlayer:" + str(self.player) +
-            "\nBoxes:" + str(self.boxList) + "\n").replace(' ', ''))                
+            "\n\tRows:" + str(self.rows) +
+            "\n\tColumns:" + str(self.columns) +  
+            "\n\tWalls:" + str(self.wallList) +
+            "\n\tTargets:" + str(self.targetList) +
+            "\n\tPlayer:" + str(self.player) +
+            "\n\tBoxes:" + str(self.boxList) + "\n").replace(' ', ''))                
 
     '''
         Method Name: successors
@@ -265,7 +265,7 @@ class Map:
     def show_successors(self) -> None:
         print("ID:" + self.ID)
         for successor in self.successors():
-            print(str(successor).replace('(', '[').replace(')', ']').replace(' ', ''))
+            print("\t" + str(successor).replace('(', '[').replace(')', ']').replace(' ', '').replace("'", ""))
     
     '''
         Method Name: objective
@@ -278,7 +278,7 @@ class Map:
         resolved = True
         for position in self.map:
             for element in position:
-                if element == '.':
+                if element == '$':
                     resolved = False
         print(str(resolved).upper())
         
