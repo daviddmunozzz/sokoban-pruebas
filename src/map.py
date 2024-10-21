@@ -212,7 +212,7 @@ class Map:
         # Check Up
         if self.check_moves(i-1, j, is_box):
             if is_box[0]:                                      
-                if self.check_moves(i-2, j, is_box):
+                if self.check_moves(i-2, j, is_box) and self.map[i-2][j] == ' ':
                     movements.append(('U', (i-2, j), (i-1, j)))
             else:
                 movements.append(('u', (i-1, j), (i, j)))
@@ -220,7 +220,7 @@ class Map:
         # Check Right
         if self.check_moves(i, j+1, is_box): 
             if is_box[0]:
-                if self.check_moves(i, j+2, is_box):
+                if self.check_moves(i, j+2, is_box) and self.map[i][j+2] == ' ':
                     movements.append(('R', (i, j+2), (i, j+1)))
             else:
                 movements.append(('r', (i, j+1), (i, j)))
@@ -228,7 +228,7 @@ class Map:
         # Check Down
         if self.check_moves(i+1, j, is_box):
             if is_box[0]:
-                if self.check_moves(i+2, j, is_box):
+                if self.check_moves(i+2, j, is_box) and self.map[i+2][j] == ' ':
                     movements.append(('D', (i+2, j), (i+1, j)))
             else:
                 movements.append(('d', (i+1, j), (i, j)))
@@ -236,7 +236,7 @@ class Map:
         # Check Left
         if self.check_moves(i, j-1, is_box):
             if is_box[0]:
-                if self.check_moves(i, j-2, is_box):
+                if self.check_moves(i, j-2, is_box) and self.map[i][j-2] == ' ':
                     movements.append(('L', (i, j-2), (i, j-1)))
             else:
                 movements.append(('l', (i, j-1), (i, j)))
