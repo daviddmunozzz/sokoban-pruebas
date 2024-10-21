@@ -1,2 +1,2 @@
 PYTHON
-./src/sokoban.py
+src
