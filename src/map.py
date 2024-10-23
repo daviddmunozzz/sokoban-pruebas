@@ -206,61 +206,38 @@ class Map:
     def get_moves(self):
         i = self.player[0]
         j = self.player[1]
-        is_box = [False] # Boolean in a list to make it mutable
         movements = []   # Tuple: <direction, suc(i,j), actual(i,j)>
 
         # Check Up
-        if self.check_moves(i-1, j, is_box):
-            if is_box[0]:                                      
-                if self.check_moves(i-2, j, is_box) and self.map[i-2][j] == ' ':
+        if self.map[i-1][j] in (' ', '.') or self.map[i-1][j] in ('$', '*'):    
+            if self.map[i-1][j] in ('$', '*'):
+                if self.map[i-2][j] in (' ', '.'):
                     movements.append(('U', (i-2, j), (i-1, j)))
             else:
                 movements.append(('u', (i-1, j), (i, j)))
-            is_box[0] = False
         # Check Right
-        if self.check_moves(i, j+1, is_box): 
-            if is_box[0]:
-                if self.check_moves(i, j+2, is_box) and self.map[i][j+2] == ' ':
+        if self.map[i][j+1] in (' ', '.') or self.map[i][j+1] in ('$', '*'):
+            if self.map[i][j+1] in ('$', '*'):
+                if self.map[i][j+2] in (' ', '.'):
                     movements.append(('R', (i, j+2), (i, j+1)))
             else:
                 movements.append(('r', (i, j+1), (i, j)))
-            is_box[0] = False
         # Check Down
-        if self.check_moves(i+1, j, is_box):
-            if is_box[0]:
-                if self.check_moves(i+2, j, is_box) and self.map[i+2][j] == ' ':
+        if self.map[i+1][j] in (' ', '.') or self.map[i+1][j] in ('$', '*'):
+            if self.map[i+1][j] in ('$', '*'):
+                if self.map[i+2][j] in (' ', '.'):
                     movements.append(('D', (i+2, j), (i+1, j)))
             else:
                 movements.append(('d', (i+1, j), (i, j)))
-            is_box[0] = False
         # Check Left
-        if self.check_moves(i, j-1, is_box):
-            if is_box[0]:
-                if self.check_moves(i, j-2, is_box) and self.map[i][j-2] == ' ':
+        if self.map[i][j-1] in (' ', '.') or self.map[i][j-1] in ('$', '*'):
+            if self.map[i][j-1] in ('$', '*'):
+                if self.map[i][j-2] in (' ', '.'):
                     movements.append(('L', (i, j-2), (i, j-1)))
             else:
                 movements.append(('l', (i, j-1), (i, j)))
-            is_box[0] = False
-
+        
         return movements
-
-    '''
-        Method Name: check_moves
-        Name of the original author: David Muñoz Escribano
-        Description: Method to check if it is possible to move in the direction i,j. It checks if the position is an empty space,
-        a target, a box or a box in target, that are the mutable elements of the game.
-        Return value: bool, True if it is possible to move, False otherwise
-    '''
-    def check_moves(self, i, j, is_box) -> bool:
-        try:
-            if self.map[i][j] in (' ', '.'):
-                return True
-            elif self.map[i][j] in ('$', '*'):
-                is_box[0] = True
-                return True
-        except IndexError:
-            return False
-        return False
 
     '''
         Method Name: show_successors

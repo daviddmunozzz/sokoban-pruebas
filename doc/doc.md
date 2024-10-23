@@ -24,14 +24,12 @@ El módulo que contiene la clase Map, dónde se desarrollan las funcionalidades 
 ## Tarea 2
 El objetivo de esta tarea es identificar la función sucesor del jugador y de las cajas. Las nuevas funcionalidades se añaden en `map.py` y se descubren añadiendo la opción 'T2S' y 'T2T' en el argumento task del juego.
 ### T2S
-La acción T2S obtiene la función sucesor del nivel, para ello se han desarrollado `successors`, `get_index`, `get_moves`, `check_moves` y `show_successors`.  
+La acción T2S obtiene la función sucesor del nivel, para ello se han desarrollado `successors`, `get_index`, `get_moves` y `show_successors`.  
 * `successors`, es el método que retorna la lista final con los movimientos sucesores del nivel, diferenciando entre mayúsculas y minúsculas, cajas y jugador, respectivamente la dirección del
-movimiento U (Up, Arriba), R (Right, Derecha), D (Down, Abajo), L (Left, Izquierda). Cada elemento de la lista que retorna es una tupla: <direccion,ID del nivel sucesor,coste>.
+movimiento U (Up, Arriba), R (Right, Derecha), D (Down, Abajo), L (Left, Izquierda). Cada elemento de la lista que retorna es una tupla: <direccion,nuevo_estado,coste>.
 * `get_index`, por parámetros se le pasa una posición (i,j) y comprueba en la lista de las cajas el igual al parámetro, devolviendo el índice.
 * `get_moves`, con la posición del jugador este método obtiene todos sus movimientos posibles. Si encuentra una caja adyacente, comprueba también si puede ser movida. Este método
-retorna una lista con elementos <<u|U|r|R|d|D|l|L>, sucesor(i,j) , actual(i,j)>
-* `check_moves`, este método devuelve un booleano, True si es un espacio en blanco o el objetivo, ya que son zonas a las que el sokoban se puede mover. También retorna True si es una caja y
-pone a True la variable *is_box* para que compruebe si se puede mover la caja. En cualquier otro caso retorna False.
+retorna una lista con elementos <<u|U|r|R|d|D|l|L>, posicion_sucesor(i,j) , posicion_actual(i,j)>
 * `show_successors`, muestra por pantalla los sucesores del nivel.
 
 ### T2T
