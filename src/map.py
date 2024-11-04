@@ -138,8 +138,6 @@ class Map:
         Return value: None
     '''
     def show_map_elements(self) -> None:
-        for i in self.map:
-            print(''.join(i))
         print(("ID:" + self.ID + 
             "\n\tRows:" + str(self.rows) +
             "\n\tColumns:" + str(self.columns) +  
@@ -154,7 +152,7 @@ class Map:
         Description: Method to generate the successors of the actual state of the game, it checks the possible movements
         of the mutable elements (player and boxes) and stores them in a list of tuples with the direction, the hash of the 
         new state and cost. 
-        The get_moves method returns a list of tuples <direction, successor(i,j), actual(i,j)>, e.g. ('U',(i-2,j),(i-1,j))
+        The get_moves method returns a list of tuples <direction, successor(i,j), current(i,j)>, e.g. ('U',(i-2,j),(i-1,j))
         In case of boxes, it is necessary to update the position of each box in the boxList, the current position will be 
         the player position and the successor position will be the new position of the box, in the player case, the successor
         position will be the new position of the player, and boxes will remain the same.
@@ -169,6 +167,7 @@ class Map:
                 boxList_successors = self.boxList.copy()
                 it = self.get_index(move[2])           # Get the index of the box in the boxList
                 boxList_successors[it] = move[1]
+                boxList_successors = sorted(boxList_successors)             # Sort the boxList
                 ID = hashMD5((str(move[2]) + str(boxList_successors)).replace(' ', '')) # Generate the hash of the new state
                 successors.append((move[0], ID, cost))
                 self.dictionary = {ID: (move[2], boxList_successors)} # Store the movement with the new ID
@@ -195,12 +194,12 @@ class Map:
         in tuple (upper case for boxes and lower case for player). First of all it checks in the directions that it is possible
         to move, if in that direction there is a box, check again if it is possible to move the box in that direction.
         The order of the movements is Up, Right, Down and Left <u|U|r|R|d|D|l|L>.
-        Return value: list of tuples <direction, successor(i,j), actual(i,j)>
+        Return value: list of tuples <direction, successor(i,j), current(i,j)>
     '''
     def get_moves(self):
         i = self.player[0]
         j = self.player[1]
-        movements = []   # Tuple: <direction, suc(i,j), actual(i,j)>
+        movements = []   # Tuple: <direction, suc(i,j), current(i,j)>
 
         # Check Up
         if self.map[i-1][j] in (' ', '.') or self.map[i-1][j] in ('$', '*'):    
