@@ -17,6 +17,8 @@ import hashlib  # Import the hashlib module to use the MD5 algorithm
 def hashMD5(string) -> str:
     return (hashlib.md5(str(string).encode()).hexdigest()).upper()
 
+from node import Node
+
 '''
     Class Name: Map
     Author name: David Muñoz Escribano
@@ -44,6 +46,8 @@ class Map:
         self.targetList = []     # List of targets (.)
 
         self.map = []            # Map of the game
+
+        dictionary = {}          # Dictionary to store ID and position of the player and boxes
 
     '''
         Method Name: define_grid
@@ -124,6 +128,8 @@ class Map:
         self.map = grid  
         # Generate the hash ID of the level
         self.ID = hashMD5((str(self.player) + str(self.boxList)).replace(' ', ''))
+        # Store the ID in the dictionary
+        self.dictionary = {self.ID: (self.player, self.boxList)}
 
     '''
         Method Name: show_map_elements
@@ -131,7 +137,9 @@ class Map:
         Description: Method to print the map of the game
         Return value: None
     '''
-    def show_map_elements(self) -> str:
+    def show_map_elements(self) -> None:
+        for i in self.map:
+            print(''.join(i))
         print(("ID:" + self.ID + 
             "\n\tRows:" + str(self.rows) +
             "\n\tColumns:" + str(self.columns) +  
@@ -158,26 +166,12 @@ class Map:
         cost = 1
         for move in movements:
             if move[0].isupper():
-                if move[0] == 'U':
-                    boxList_successors = self.boxList.copy()
-                    it = self.get_index(move[2])           # Get the index of the box in the boxList
-                    boxList_successors[it] = move[1]       # Replace the actual position of the box by the new position
-                    successors.append((move[0], hashMD5((str(move[2]) + str(boxList_successors)).replace(' ', '')), cost))
-                elif move[0] == 'R':
-                    boxList_successors = self.boxList.copy()
-                    it = self.get_index(move[2])
-                    boxList_successors[it] = move[1]
-                    successors.append((move[0], hashMD5((str(move[2]) + str(boxList_successors)).replace(' ', '')), cost))
-                elif move[0] == 'D':
-                    boxList_successors = self.boxList.copy()
-                    it = self.get_index(move[2])
-                    boxList_successors[it] = move[1]
-                    successors.append((move[0], hashMD5((str(move[2]) + str(boxList_successors)).replace(' ', '')), cost))
-                elif move[0] == 'L':
-                    boxList_successors = self.boxList.copy()
-                    it = self.get_index(move[2])
-                    boxList_successors[it] = move[1]
-                    successors.append((move[0], hashMD5((str(move[2]) + str(boxList_successors)).replace(' ', '')), cost))
+                boxList_successors = self.boxList.copy()
+                it = self.get_index(move[2])           # Get the index of the box in the boxList
+                boxList_successors[it] = move[1]
+                ID = hashMD5((str(move[2]) + str(boxList_successors)).replace(' ', '')) # Generate the hash of the new state
+                successors.append((move[0], ID, cost))
+                self.dictionary = {ID: (move[2], boxList_successors)} # Store the movement with the new ID
             else:
                 successors.append((move[0], hashMD5((str(move[1]) + str(self.boxList)).replace(' ', '')), cost))
         return successors
@@ -264,5 +258,84 @@ class Map:
                 if element == '$':
                     resolved = False
         print(str(resolved).upper())
-        
-                                   
+
+
+    def solve_sokoban(self, strategy, depth):
+        map = self.map.copy()
+        player = self.player
+        boxList = self.boxList.copy()
+
+        fringe = []
+        visited = []
+        solution = False
+
+        idNode = 0
+        depth = 0
+        cost = 0.00
+        heuristic = 0.00
+        value = 0.00
+        fringe.append(Node(idNode, self.ID, None, 'NOTHING', depth, cost, heuristic, value)) # Insert the root node in the fringe
+    
+        while len(fringe) != 0 and not solution:
+            node = fringe.pop(0)
+            self.update_map(node)
+           
+            if(self.objective()):
+                solution = True
+            if(node.depth == depth):
+                visited.append(node)
+                self.expand(node)
+
+            
+    def expand(self, node):
+        S = self.successors()
+        nodes = []
+        ID = node.ID
+
+        for suc in S:
+            ID =+ 1
+            if suc[0].isupper():
+                nodes.append(Node(ID, suc[1], node, suc[0], node.depth +1, node.cost +1, node.heuristic, self.calculate_value(node,'BFS')))
+            else:                                                                            # Value depends on algorithm (BFS, DFS, UC)
+                nodes.append(Node(ID, suc[1], node, suc[0], node.depth +1, node.cost +1, node.heuristic, self.calculate_value(node,'BFS')))
+        return nodes
+    
+    def calculate_value(self, node, strategy) -> int:
+        if strategy == 'BFS':
+            value = node.value +1
+        elif strategy == 'DFS':
+            value == value / node.depth +1
+        elif strategy == 'UC':
+            value = node.cost
+        return value
+
+                                              # dictionary[0] = estado original                ## IDEA
+    def update_map(self, node): # Tengo que aclarar el mapa, no mantiene el estado original (crear variable original_map e ir cambiando map)
+        suc_positions = self.dictionary[node.state] # P0 = player position, P1 = boxList pos
+        new_player = suc_positions[0]
+        i = self.player[0]
+        j = self.player[1]
+        new_boxList = suc_positions[1]
+
+        ## CODE MAL, intencion es vaciar de cajas y player el mapa y actualizar con las nuevas posiciones
+        for ('@', '$') in self.map:
+            self.map[i][j] = ' '
+            
+
+        if node.action.isupper():
+            if node.action == 'U':
+                self.map[i-1][j] = '@'
+                self.map[i-2][j] = '$'
+            elif node.action == 'R':
+                self.map[i][j+1] = '@'
+                self.map[i][j+2] = '$'
+            elif node.action == 'D':
+                self.map[i+1][j] = '@'
+                self.map[i+2][j] = '$'
+            elif node.action == 'L':
+                self.map[i][j-1] = '@'
+                self.map[i][j-2] = '$'
+        else:
+            self.map[i][j] = ' '    # Remove current player position
+            self.map[new_player[0]][new_player[1]] = '@'  # Update player position
+            self.player = new_player

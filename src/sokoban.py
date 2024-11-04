@@ -35,7 +35,8 @@ def sokoban_exec() -> None:
         map.show_successors()
     elif args.task == 'T2T':
         map.objective()
-
+    elif args.task == 'T3':
+        map.solve_sokoban(args.strategy, args.depth)
 
 ''' 
     Main method to execute the sokoban game

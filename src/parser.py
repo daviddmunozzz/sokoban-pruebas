@@ -17,4 +17,6 @@ def get_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description='Arguments for sokoban') # Create the parser object
     parser.add_argument('task', type=str, help='Task to execute')
     parser.add_argument('-l', '--level', type=str, help='Level to execute')
+    parser.add_argument('-s', '--strategy', type=str, help='Strategy to use')
+    parser.add_argument('-d', '--depth', type=int, help='Maximum depth to search')
     return parser
