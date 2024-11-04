@@ -318,8 +318,8 @@ class Map:
         new_boxList = suc_positions[1]
 
         ## CODE MAL, intencion es vaciar de cajas y player el mapa y actualizar con las nuevas posiciones
-        for ('@', '$') in self.map:
-            self.map[i][j] = ' '
+        #for ('@', '$') in self.map:
+        #    self.map[i][j] = ' '
             
 
         if node.action.isupper():
