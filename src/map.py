@@ -46,8 +46,9 @@ class Map:
         self.targetList = []     # List of targets (.)
 
         self.map = []            # Map of the game
+        self.empty_map = []      # Map of the game without player and boxes
 
-        dictionary = {}          # Dictionary to store ID and position of the player and boxes
+        self.dictionary = {}     # Dictionary to store ID and position of the player and boxes
 
     '''
         Method Name: define_grid
@@ -126,6 +127,8 @@ class Map:
 
         # Save the grid in the map instance variable
         self.map = grid  
+        self.empty_map = grid
+        self.blank_map()
         # Generate the hash ID of the level
         self.ID = hashMD5((str(self.player) + str(self.boxList)).replace(' ', ''))
         # Store the ID in the dictionary
@@ -170,9 +173,12 @@ class Map:
                 boxList_successors = sorted(boxList_successors)             # Sort the boxList
                 ID = hashMD5((str(move[2]) + str(boxList_successors)).replace(' ', '')) # Generate the hash of the new state
                 successors.append((move[0], ID, cost))
-                self.dictionary = {ID: (move[2], boxList_successors)} # Store the movement with the new ID
+                #self.dictionary = {ID: (move[2], boxList_successors)} 
+                self.dictionary[ID] = (move[2], boxList_successors) # Store the movement with the new ID
             else:
-                successors.append((move[0], hashMD5((str(move[1]) + str(self.boxList)).replace(' ', '')), cost))
+                ID = hashMD5((str(move[1]) + str(self.boxList)).replace(' ', ''))
+                successors.append((move[0], ID, cost))
+                self.dictionary[ID] = (move[1], self.boxList)
         return successors
 
     ''' 
@@ -250,91 +256,114 @@ class Map:
         the level is not resolved.
         Return value: None
     '''
-    def objective(self) -> None:
+    def objective(self) -> bool:
         resolved = True
         for position in self.map:
             for element in position:
                 if element == '$':
                     resolved = False
-        print(str(resolved).upper())
+        return resolved
 
-
-    def solve_sokoban(self, strategy, depth):
-        map = self.map.copy()
-        player = self.player
-        boxList = self.boxList.copy()
-
+    def solve_sokoban(self, strategy, max_depth) -> None:
         fringe = []
         visited = []
         solution = False
 
-        idNode = 0
+        node_ID = [0]
         depth = 0
         cost = 0.00
         heuristic = 0.00
         value = 0.00
-        fringe.append(Node(idNode, self.ID, None, 'NOTHING', depth, cost, heuristic, value)) # Insert the root node in the fringe
-    
-        while len(fringe) != 0 and not solution:
-            node = fringe.pop(0)
+        fringe.append(Node(node_ID[0], self.ID, None, 'NOTHING', depth, cost, heuristic, value)) # Insert the root node in the fringe
+        
+        while fringe and not solution:
+            node = fringe[0]
             self.update_map(node)
-           
-            if(self.objective()):
+        
+            if self.objective(): 
                 solution = True
-            if(node.depth == depth):
-                visited.append(node)
-                self.expand(node)
+            if fringe[0].depth <= max_depth and node not in visited:
+                visited.append(node)                
+                expanded_nodes = self.expand(node, visited, strategy, node_ID)
+                if expanded_nodes:
+                    fringe.extend(expanded_nodes)                
+            fringe.pop(0)
 
-            
-    def expand(self, node):
+        if solution:
+            self.make_path(node, visited)
+        else:
+            print("Solution not exists")
+                
+    def make_path(self, node, visited) -> list:
+        path = []
+        while node.parent is not None:
+            path.insert(0, node)
+            node = node.parent
+        path.insert(0, node)
+        self.print_path(path)
+   
+    def print_path(self, path) -> None:
+        print(str(repr(self.level)).replace("'", ""))
+        for node in path:
+            if node.parent is not None:
+                print(f"{node.node_ID},{node.state},{node.parent.node_ID},{node.action},{node.depth},{node.cost},{node.heuristic},{node.value}")
+            else:
+                print(f"{node.node_ID},{node.state},None,{node.action},{node.depth},{node.cost},{node.heuristic},{node.value}")
+
+    def expand(self, node, visited, strategy, node_ID) -> list:
         S = self.successors()
         nodes = []
-        ID = node.ID
-
-        for suc in S:
-            ID =+ 1
-            if suc[0].isupper():
-                nodes.append(Node(ID, suc[1], node, suc[0], node.depth +1, node.cost +1, node.heuristic, self.calculate_value(node,'BFS')))
-            else:                                                                            # Value depends on algorithm (BFS, DFS, UC)
-                nodes.append(Node(ID, suc[1], node, suc[0], node.depth +1, node.cost +1, node.heuristic, self.calculate_value(node,'BFS')))
+        
+        for suc in S: # suc = ('U', ID, cost)
+            node_ID[0] += 1
+            if self.check_visited(suc[1],visited):                                               # Value depends on algorithm (BFS, DFS, UC)                                                                                    
+                nodes.append(Node(node_ID[0], suc[1], node, suc[0], node.depth +1, node.cost + 1.00, node.heuristic, self.calculate_value(node,strategy)))
+            if nodes:
+                nodes.sort(key=lambda n: (n.value, n.node_ID)) 
         return nodes
     
-    def calculate_value(self, node, strategy) -> int:
-        if strategy == 'BFS':
-            value = node.value +1
-        elif strategy == 'DFS':
-            value == value / node.depth +1
-        elif strategy == 'UC':
-            value = node.cost
-        return value
+    def check_visited(self, state, visited) -> bool:
+        for node in visited:
+            if node.state == state: 
+                return False
+        return True
 
-                                              # dictionary[0] = estado original                ## IDEA
-    def update_map(self, node): # Tengo que aclarar el mapa, no mantiene el estado original (crear variable original_map e ir cambiando map)
-        suc_positions = self.dictionary[node.state] # P0 = player position, P1 = boxList pos
+    def calculate_value(self, node, strategy) -> int:
+        value = 0.00
+        if strategy == 'BFS':
+            value = float(node.value) + 1.00 
+        elif strategy == 'DFS':
+            value = float(node.value) / (node.depth + 1)
+        elif strategy == 'UC':
+            value = float(node.cost)
+        return value
+    
+    def blank_map(self) -> None:
+        for i in range(self.rows):
+            for j in range(self.columns):
+                if self.map[i][j] in ('@', '$'):
+                    self.empty_map[i][j] = ' '
+                elif self.map[i][j] in ('+', '*'):
+                    self.empty_map[i][j] = '.'
+
+    def update_map(self, node) -> None: 
+        suc_positions = self.dictionary[node.state] # P0 = player position, P1 = boxList positions
         new_player = suc_positions[0]
-        i = self.player[0]
-        j = self.player[1]
         new_boxList = suc_positions[1]
 
-        ## CODE MAL, intencion es vaciar de cajas y player el mapa y actualizar con las nuevas posiciones
-        #for ('@', '$') in self.map:
-        #    self.map[i][j] = ' '
-            
+        self.map = [row.copy() for row in self.empty_map]
 
-        if node.action.isupper():
-            if node.action == 'U':
-                self.map[i-1][j] = '@'
-                self.map[i-2][j] = '$'
-            elif node.action == 'R':
-                self.map[i][j+1] = '@'
-                self.map[i][j+2] = '$'
-            elif node.action == 'D':
-                self.map[i+1][j] = '@'
-                self.map[i+2][j] = '$'
-            elif node.action == 'L':
-                self.map[i][j-1] = '@'
-                self.map[i][j-2] = '$'
+        # Update the player position
+        if self.map[new_player[0]][new_player[1]] == '.':
+            self.map[new_player[0]][new_player[1]] = '+'
         else:
-            self.map[i][j] = ' '    # Remove current player position
-            self.map[new_player[0]][new_player[1]] = '@'  # Update player position
-            self.player = new_player
+            self.map[new_player[0]][new_player[1]] = '@' 
+        self.player = new_player
+
+        # Update box positions
+        for box in new_boxList:
+            if self.map[box[0]][box[1]] == '.':
+                self.map[box[0]][box[1]] = '*'
+            else:
+                self.map[box[0]][box[1]] = '$'  
+        self.boxList = new_boxList

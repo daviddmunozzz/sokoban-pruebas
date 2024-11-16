@@ -34,7 +34,7 @@ def sokoban_exec() -> None:
     elif args.task == 'T2S':
         map.show_successors()
     elif args.task == 'T2T':
-        map.objective()
+        print(str(map.objective()).upper())
     elif args.task == 'T3':
         map.solve_sokoban(args.strategy, args.depth)
 
