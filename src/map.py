@@ -126,8 +126,8 @@ class Map:
                     j += 1
 
         # Save the grid in the map instance variable
-        self.map = grid  
-        self.empty_map = grid
+        self.map = grid
+        self.empty_map = [row.copy() for row in grid]
         self.blank_map()
         # Generate the hash ID of the level
         self.ID = hashMD5((str(self.player) + str(self.boxList)).replace(' ', ''))
@@ -173,7 +173,6 @@ class Map:
                 boxList_successors = sorted(boxList_successors)             # Sort the boxList
                 ID = hashMD5((str(move[2]) + str(boxList_successors)).replace(' ', '')) # Generate the hash of the new state
                 successors.append((move[0], ID, cost))
-                #self.dictionary = {ID: (move[2], boxList_successors)} 
                 self.dictionary[ID] = (move[2], boxList_successors) # Store the movement with the new ID
             else:
                 ID = hashMD5((str(move[1]) + str(self.boxList)).replace(' ', ''))
@@ -252,7 +251,7 @@ class Map:
     '''
         Method Name: objective
         Name of the original author: David Muñoz Escribano
-        Description: Method to check if the level is resolved, it iterates in the map and if it finds a '.' (target) it means that
+        Description: Method to check if the level is resolved, it iterates in the map and if it finds a '$' (box) it means that
         the level is not resolved.
         Return value: None
     '''
