@@ -279,8 +279,8 @@ class Map:
         depth = 0
         cost = 0.00
         heuristic = 0.00
-        value = 0.00
-        fringe.append(Node(node_ID[0], self.ID, None, 'NOTHING', depth, cost, heuristic, value)) # Insert the root node in the fringe
+        
+        fringe.append(Node(node_ID[0], self.ID, None, 'NOTHING', depth, cost, heuristic, strategy)) # Insert the root node in the fringe
         
         while fringe and not solution:
             node = fringe.pop(0)
