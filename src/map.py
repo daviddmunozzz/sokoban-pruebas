@@ -2,10 +2,8 @@
     Module Name: map
     Author name: David Muñoz Escribano
     Realase: 08-10-2024
-    Module version: 1.0
-    Module description: This module satisfies the proposed task 1 of the sokoban game. It contains
-    the class Map that represents the map of the game and the methods to generate the hash of the level
-
+    Module version: 3.0
+    Module description: This module contains the class Map, which represents the map of the game.
 '''
 import hashlib  # Import the hashlib module to use the MD5 algorithm
 
@@ -23,7 +21,7 @@ from node import Node
     Class Name: Map
     Author name: David Muñoz Escribano
     Realase: 08-10-2024
-    Class version: 1.0
+    Class version: 3.0
     Class description: This class encapsulates the attributes and methods to represent the map of the game. 
 '''
 class Map:
@@ -263,6 +261,15 @@ class Map:
                     resolved = False
         return resolved
 
+    '''
+        Method Name: solve_sokoban
+        Name of the original author: David Muñoz Escribano
+        Description: This method do the algorith to obtain the search tree that resolve the level. The tree is composed for nodes and 
+        nodes are added in fringe to be expanded. To not repeat the same nodes, when they were visited they are added to visited[].
+        Also it exists maximum depth that it write in command palette, if the solution is not finded in that depth, the level won`t succeds.
+        In other case the path to the level resolved will be printed in screen.
+        Return value: None    
+    '''
     def solve_sokoban(self, strategy, max_depth) -> None:
         fringe = []
         visited = []
@@ -276,31 +283,47 @@ class Map:
         fringe.append(Node(node_ID[0], self.ID, None, 'NOTHING', depth, cost, heuristic, value)) # Insert the root node in the fringe
         
         while fringe and not solution:
-            node = fringe[0]
+            node = fringe.pop(0)
             self.update_map(node)
         
             if self.objective(): 
                 solution = True
-            if fringe[0].depth <= max_depth and node not in visited:
+            if node.depth <= max_depth and node not in visited:
                 visited.append(node)                
                 expanded_nodes = self.expand(node, visited, strategy, node_ID)
                 if expanded_nodes:
-                    fringe.extend(expanded_nodes)                
-            fringe.pop(0)
+                    if strategy == 'DFS':
+                        expanded_nodes.extend(fringe)
+                        fringe = expanded_nodes.copy()
+                        #for f in fringe:
+                         #   print(f.node_ID)
+                    else:
+                        fringe.extend(expanded_nodes)                
+            #fringe.pop(0)   
 
         if solution:
-            self.make_path(node, visited)
+            self.make_path(node)
         else:
             print("Solution not exists")
-                
-    def make_path(self, node, visited) -> list:
+    '''
+        Method Name: make_path
+        Name of the original author: David Muñoz Escribano
+        Description: This method constructs the path from the solution to the node zero.
+        Return value: list, the path from node zero to the solution
+    '''
+    def make_path(self, node) -> list:
         path = []
         while node.parent is not None:
             path.insert(0, node)
             node = node.parent
         path.insert(0, node)
         self.print_path(path)
-   
+    '''
+        Method Name: print_path
+        Name of the original author: David Muñoz Escribano
+        Description: This method do the format and prints the output from the resolved level.
+        Return value: None
+    '''
     def print_path(self, path) -> None:
         print(str(repr(self.level)).replace("'", ""))
         for node in path:
@@ -308,35 +331,29 @@ class Map:
                 print(f"{node.node_ID},{node.state},{node.parent.node_ID},{node.action},{node.depth},{node.cost},{node.heuristic},{node.value}")
             else:
                 print(f"{node.node_ID},{node.state},None,{node.action},{node.depth},{node.cost},{node.heuristic},{node.value}")
-
+    '''
+        Method Name: expand
+        Name of the original author: David Muñoz Escribano
+        Description: This method takes the node referenced in the parameters, generates the successors of it and if they aren't
+        visited, the new nodes are added in a list (nodes)
+        Return value: list, expanded nodes
+    '''
     def expand(self, node, visited, strategy, node_ID) -> list:
         S = self.successors()
         nodes = []
         
         for suc in S: # suc = ('U', ID, cost)
             node_ID[0] += 1
-            if self.check_visited(suc[1],visited):                                               # Value depends on algorithm (BFS, DFS, UC)                                                                                    
-                nodes.append(Node(node_ID[0], suc[1], node, suc[0], node.depth +1, node.cost + 1.00, node.heuristic, self.calculate_value(node,strategy)))
-            if nodes:
-                nodes.sort(key=lambda n: (n.value, n.node_ID)) 
+            if node.check_visited(suc[1],visited):                                               # Value depends on algorithm (BFS, DFS, UC)                                                                                    
+                nodes.append(Node(node_ID[0], suc[1], node, suc[0], node.depth +1, node.cost + 1.00, node.heuristic, strategy))
         return nodes
-    
-    def check_visited(self, state, visited) -> bool:
-        for node in visited:
-            if node.state == state: 
-                return False
-        return True
 
-    def calculate_value(self, node, strategy) -> int:
-        value = 0.00
-        if strategy == 'BFS':
-            value = float(node.value) + 1.00 
-        elif strategy == 'DFS':
-            value = float(node.value) / (node.depth + 1)
-        elif strategy == 'UC':
-            value = float(node.cost)
-        return value
-    
+    '''
+        Method Name: blank_map
+        Name of the original author: David Muñoz Escribano
+        Description: This method obtains the map of the level and change the value of the variable `empty_map` without the player and boxes. 
+        Return value: None      
+    '''
     def blank_map(self) -> None:
         for i in range(self.rows):
             for j in range(self.columns):
@@ -345,6 +362,13 @@ class Map:
                 elif self.map[i][j] in ('+', '*'):
                     self.empty_map[i][j] = '.'
 
+    '''
+        Method Name: update_map
+        Name of the original author: David Muñoz Escribano
+        Description: From the dictionary and the state node referenced it recovers positions of player and boxes in the successor movement.
+        It copies the empty map then it updates with new positions. 
+        Return value: None      
+    '''
     def update_map(self, node) -> None: 
         suc_positions = self.dictionary[node.state] # P0 = player position, P1 = boxList positions
         new_player = suc_positions[0]

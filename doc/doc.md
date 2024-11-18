@@ -34,4 +34,21 @@ retorna una lista con elementos <<u|U|r|R|d|D|l|L>, posicion_sucesor(i,j) , posi
 
 ### T2T
 La meta de esta tarea es mostrar el resultado de la función OBJETIVO para el nivel. Se ha desarrollado el método `objective`.
-* `objective`, comprueba que no exista ningún objetivo en el nivel, en caso de que exista alguna caja ('$') se considerará que el objetivo no está cumplido. Muestra por pantalla el resultado.
+* `objective`, comprueba que no exista ningún objetivo en el nivel, en caso de que exista alguna caja ('$') se considerará que el objetivo no está cumplido. Muestra por pantalla el resultado.  
+
+## Tarea 3  
+### T3
+Esta tarea crea el árbol de búsqueda hacia la solución del nivel. Se ha desarrollado una clase `Node` y nuevas funcionalidades en `map.py`. Se han creado nuevos atributos de la clase `Map`, `dictionary`, que es un diccionario que almacena el estado (clave) y las posiciones del jugador y las cajas (valor) y `empty_map` que es el mapa sin el jugador y las cajas
+Al ejecutar el nivel en la paleta de comandos se debe añadir el nivel, la estrategia a utilizar y el máximo de profundidad a la que se quiere llegar.
+  - Node  
+    La clase Node encapsula los siguientes atributos: `node_ID`, `state`, `parent`, `action`, `depth`, `cost`, `heuristic` y `value`. También dispone de métodos:  
+      * `calculate_value`: Calcula el valor (`value`) del nodo dependiendo de la estrategia utilizada.  
+      * `check_visited`: Comprueba que el nodo no ha sido visitado con anterioridad.  
+Las nuevas funcionalidades desarrolladas en `map.py` son las siguientes:  
+  * `solve_sokoban`: Contiene el algoritmo de búsqueda para la solución del nivel, se utilizan 2 listas `fringe`, en la que se añaden los nodos a visitar y `visited`, en la que se añaden los nodos ya visitados. Para llevar a cabo el algoritmo lo primero de todo es añadir el nodo cero a la frontera (estado inicial del nivel), mientras la frontera no este vacía y no sea solución se ejecuta un bucle while, se saca el primer elemento de la frontera y se actualiza el mapa con las posiciones del nodo, posteriormente se comprueba si es objetivo, en caso de que sí, el nodo es solución y finaliza el bucle para después realizar el camino solución, en el caso de que no, se comprueba que el nodo no esté visitado y que la profundidad sea la adecuada, cumpliéndose esta condición el nodo se añade a `visited`, se expande y estos nuevos nodos se añaden a la frontera. En caso de no encontrar la solución se mostrará un mensaje por pantalla.
+  * `make_path`: Construye el camino solución, desde el nodo objetivo el método comprueba que el atributo `parent` no es None, es decir, que no es el nodo cero. En cada iteración se añade el nodo a la lista path, cuando `parent` es None, se añade por útlimo este nodo y se llama a imprimir por pantalla.
+  * `print_path`: Formatea e imprime por pantalla el resultado de la búsqueda.
+  * `expand`: A partir de los sucesores del nivel genera los nuevos nodos de expansión, por cada sucesor, comprueba que no está visitado y genera un nuevo nodo con un identificador único.
+  * `blank_map`: Inicializa la variable `empty_map`.
+  * `update_map`: Obtiene las posiciones del estado del nodo en el diccionario, actualiza el valor actual del mapa a vacío para posteriormente actualizar con las nuevas posiciones en el mapa.
+  
