@@ -328,9 +328,9 @@ class Map:
         print(str(repr(self.level)).replace("'", ""))
         for node in path:
             if node.parent is not None:
-                print(f"{node.node_ID},{node.state},{node.parent.node_ID},{node.action},{node.depth},{node.cost},{node.heuristic},{node.value}")
+                print(f"{node.node_ID},{node.state},{node.parent.node_ID},{node.action},{node.depth},{node.cost:.2f},{node.heuristic:.2f},{node.value:.2f}")
             else:
-                print(f"{node.node_ID},{node.state},None,{node.action},{node.depth},{node.cost},{node.heuristic},{node.value}")
+                print(f"{node.node_ID},{node.state},None,{node.action},{node.depth},{node.cost:.2f},{node.heuristic:.2f},{node.value:.2f}")
     '''
         Method Name: expand
         Name of the original author: David Muñoz Escribano
