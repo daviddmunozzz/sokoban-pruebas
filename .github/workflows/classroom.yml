@@ -65,4 +65,4 @@ jobs:
         T2T_RESULTS: "${{steps.t2t.outputs.result}}"
         T3_RESULTS: "${{steps.t3.outputs.result}}"
       with:
-        runners: t1,t2s,t2t,t3
+        runners: t1,t2s,t2t,t3,t4
