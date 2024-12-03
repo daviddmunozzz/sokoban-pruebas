@@ -40,14 +40,6 @@ jobs:
         command: "./sokoban-test/test.sh  T2T ./sokoban-test/n3.txt ./sokoban-test/o3T2T.txt"
         timeout: 10
         max-score: 1
-    - name: Autograding Reporter
-      uses: classroom-resources/autograding-grading-reporter@v1
-      env:
-        T1_RESULTS: "${{steps.t1.outputs.result}}"
-        T2S_RESULTS: "${{steps.t2s.outputs.result}}"
-        T2T_RESULTS: "${{steps.t2t.outputs.result}}"
-      with:
-        runners: t1,t2s,t2t
     - name: T3
       id: t3
       uses: classroom-resources/autograding-command-grader@v1
@@ -57,6 +49,15 @@ jobs:
         command: "./sokoban-test/test.sh  T3 ./sokoban-test/n4.txt ./sokoban-test/o4T3.txt"
         timeout: 10
         max-score: 1
+    - name: T4
+      id: t4
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: T4
+        setup-command: ''
+        command: "./sokoban-test/test.sh  T3 ./sokoban-test/n5.txt ./sokoban-test/o5T4.txt"
+        timeout: 5
+        max-score: 1
     - name: Autograding Reporter
       uses: classroom-resources/autograding-grading-reporter@v1
       env:
@@ -64,5 +65,6 @@ jobs:
         T2S_RESULTS: "${{steps.t2s.outputs.result}}"
         T2T_RESULTS: "${{steps.t2t.outputs.result}}"
         T3_RESULTS: "${{steps.t3.outputs.result}}"
+        T4_RESULTS: "${{steps.t4.outputs.result}}"
       with:
         runners: t1,t2s,t2t,t3,t4
