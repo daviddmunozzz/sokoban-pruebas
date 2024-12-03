@@ -31,28 +31,19 @@ class Node:
     '''
     def __eq__(self, other) -> bool:
         return self.state == other.state
+    
     '''
         Method Name: calculate_value
         Name of the original author: David Muñoz Escribano
         Description: Depends on the strategy of algorithm it calculates the value of the node.
         Return value: int, value of the node
     '''
-
     def calculate_value(self, strategy) -> int:
         value = 0.00
         if strategy == 'BFS':
-            value = round((float(self.depth)), 2) 
+            value = float(self.depth)
         elif strategy == 'DFS':
-            value = round((1 / (float(self.depth) + 1.00)), 2)
+            value = 1 / (float(self.depth) + 1.00)
         elif strategy == 'UC':
-            value = round((float(self.cost)), 2)
+            value = float(self.cost)
         return value
-    
-    '''
-        Method Name: check_visited
-        Name of the original author: David Muñoz Escribano
-        Description: Checks that the state of the successor isn't in visited.
-        Return value: bool      
-    '''
-    def check_visited(self, state, visited) -> bool:
-        return all(node.state != state for node in visited)
