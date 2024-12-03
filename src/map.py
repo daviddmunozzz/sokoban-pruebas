@@ -168,7 +168,7 @@ class Map:
                 boxList_successors = self.boxList.copy()
                 it = self.get_index(move[2])           # Get the index of the box in the boxList
                 boxList_successors[it] = move[1]
-                boxList_successors = sorted(boxList_successors)             # Sort the boxList
+                boxList_successors.sort()   # Sort the boxList
                 ID = hashMD5((str(move[2]) + str(boxList_successors)).replace(' ', '')) # Generate the hash of the new state
                 successors.append((move[0], ID, cost))
                 self.dictionary[ID] = (move[2], boxList_successors) # Store the movement with the new ID
@@ -288,19 +288,21 @@ class Map:
         
             if self.objective(): 
                 solution = True
-            if node.depth <= max_depth and node not in visited:
-                visited.append(node)                
-                expanded_nodes = self.expand(node, visited, strategy, node_ID)
-                if expanded_nodes:
+            else:
+                if node.depth < max_depth and node.state not in visited:
+                    visited.append(node.state)                
+                    expanded_nodes = self.expand(node, visited, strategy, node_ID)
                     if strategy == 'DFS':
-                        expanded_nodes.extend(fringe)
-                        fringe = expanded_nodes.copy()
-                        #for f in fringe:
-                         #   print(f.node_ID)
+                        fringe = expanded_nodes + fringe
                     else:
-                        fringe.extend(expanded_nodes)                
-            #fringe.pop(0)   
-
+                        fringe.extend(expanded_nodes)     
+                    '''
+                    if expanded_nodes:
+                        if strategy == 'DFS':
+                            fringe = expanded_nodes + fringe
+                        else:
+                            fringe.extend(expanded_nodes)                  
+                    '''
         if solution:
             self.make_path(node)
         else:
@@ -308,8 +310,8 @@ class Map:
     '''
         Method Name: make_path
         Name of the original author: David Muñoz Escribano
-        Description: This method constructs the path from the solution to the node zero.
-        Return value: list, the path from node zero to the solution
+        Description: This method constructs the path from the solution to the root node.
+        Return value: list, the path from root node to the solution
     '''
     def make_path(self, node) -> list:
         path = []
@@ -328,7 +330,7 @@ class Map:
         print(str(repr(self.level)).replace("'", ""))
         for node in path:
             if node.parent is not None:
-                print(f"{node.node_ID},{node.state},{node.parent.node_ID},{node.action},{node.depth},{node.cost:.2f},{node.heuristic:.2f},{node.value:.2f}")
+                print(f"{node.node_ID},{node.state},{node.parent.node_ID},{node.action},{node.depth},{node.cost:.2f},{node.heuristic:.2f},{node.value+0.001:.2f}")
             else:
                 print(f"{node.node_ID},{node.state},None,{node.action},{node.depth},{node.cost:.2f},{node.heuristic:.2f},{node.value:.2f}")
     '''
@@ -344,10 +346,11 @@ class Map:
         
         for suc in S: # suc = ('U', ID, cost)
             node_ID[0] += 1
-            if node.check_visited(suc[1],visited):                                               # Value depends on algorithm (BFS, DFS, UC)                                                                                    
+            if suc[1] not in visited:                                                                                                                                
                 nodes.append(Node(node_ID[0], suc[1], node, suc[0], node.depth +1, node.cost + 1.00, node.heuristic, strategy))
+                
         return nodes
-
+    
     '''
         Method Name: blank_map
         Name of the original author: David Muñoz Escribano
