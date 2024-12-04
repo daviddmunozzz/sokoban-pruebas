@@ -24,7 +24,7 @@ class Node:
         self.action = action
         self.depth = depth
         self.cost = cost
-        self.heuristic = self.heuristic_function(targetList, boxList)
+        self.heuristic = self.heuristic_function(targetList, boxList, strategy)
         self.value = self.calculate_value(strategy)
     '''
         Method Name: __eq__
@@ -61,20 +61,20 @@ class Node:
         Description: Calculates the heuristic value of the node.
         Return value: float, heuristic value of the node
     '''
-    def heuristic_function(self, boxList, targetList) -> float:
+    def heuristic_function(self, boxList, targetList, strategy) -> float:
         hManhattan = 0  
         values = []
 
-        for i in range(len(boxList)):
-            minHmanhattan = abs(targetList[0][0] - boxList[i][0]) + abs(targetList[0][1] - boxList[i][1])
-            for target in targetList:
-                hManhattan = abs(target[0] - boxList[i][0]) + abs(target[1] - boxList[i][1])
-                if hManhattan < minHmanhattan:
-                    minHmanhattan = hManhattan
-            values.append(minHmanhattan)
-        
-        hManhattan = sum(values)
-       # print(f"Node {self.node_ID} h: {hManhattan} = {values} \n Target: {targetList} Box: {boxList}")  
-        #sleep(3)
+        if strategy == 'GREEDY' or strategy == 'A*':
+            for i in range(len(boxList)):
+                minHmanhattan = abs(targetList[0][0] - boxList[i][0]) + abs(targetList[0][1] - boxList[i][1])
+                for target in targetList:
+                    hManhattan = abs(target[0] - boxList[i][0]) + abs(target[1] - boxList[i][1])
+                    if hManhattan < minHmanhattan:
+                        minHmanhattan = hManhattan
+                values.append(minHmanhattan)
+            
+            hManhattan = sum(values)
+
         return hManhattan
             
