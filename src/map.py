@@ -278,9 +278,9 @@ class Map:
         node_ID = [0]
         depth = 0
         cost = 0.00
-        heuristic = 0.00
+        #heuristic = 0.00
         
-        fringe.append(Node(node_ID[0], self.ID, None, 'NOTHING', depth, cost, heuristic, strategy)) # Insert the root node in the fringe
+        fringe.append(Node(node_ID[0], self.ID, None, 'NOTHING', depth, cost, self.dictionary[self.ID][1], self.targetList, strategy)) # Insert the root node in the fringe
         
         while fringe and not solution:
             node = fringe.pop(0)
@@ -294,15 +294,11 @@ class Map:
                     expanded_nodes = self.expand(node, visited, strategy, node_ID)
                     if strategy == 'DFS':
                         fringe = expanded_nodes + fringe
+                    if strategy == 'GREEDY' or strategy == 'A*':
+                        fringe = sorted(fringe + expanded_nodes, key=lambda x: x.value)
                     else:
                         fringe.extend(expanded_nodes)     
-                    '''
-                    if expanded_nodes:
-                        if strategy == 'DFS':
-                            fringe = expanded_nodes + fringe
-                        else:
-                            fringe.extend(expanded_nodes)                  
-                    '''
+                    
         if solution:
             self.make_path(node)
         else:
@@ -347,9 +343,9 @@ class Map:
         for suc in S: # suc = ('U', ID, cost)
             node_ID[0] += 1
             if suc[1] not in visited:                                                                                                                                
-                nodes.append(Node(node_ID[0], suc[1], node, suc[0], node.depth +1, node.cost + 1.00, node.heuristic, strategy))
+                nodes.append(Node(node_ID[0], suc[1], node, suc[0], node.depth +1, node.cost + 1.00, self.dictionary[suc[1]][1], self.targetList, strategy))
                 
-        return nodes
+        return nodes        
     
     '''
         Method Name: blank_map
