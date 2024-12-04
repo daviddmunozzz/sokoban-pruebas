@@ -58,7 +58,8 @@ class Node:
     '''
         Method Name: heuristic_function
         Name of the original author: David Muñoz Escribano
-        Description: Calculates the heuristic value of the node.
+        Description: Calculates the heuristic value of the node. It calculates the sum of the manhattan distances
+        of the boxes to the targets.
         Return value: float, heuristic value of the node
     '''
     def heuristic_function(self, boxList, targetList, strategy) -> float:
