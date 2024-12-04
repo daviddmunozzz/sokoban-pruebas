@@ -13,15 +13,18 @@
     Class version: 1.0
     Class description: It contains diferent attributes and methods to represent the node.
 '''
+from time import sleep
+
+
 class Node:
-    def __init__(self, node_ID, state, parent, action, depth, cost, heuristic, strategy):
+    def __init__(self, node_ID, state, parent, action, depth, cost, targetList, boxList, strategy):
         self.node_ID = node_ID
         self.state = state
         self.parent = parent
         self.action = action
         self.depth = depth
         self.cost = cost
-        self.heuristic = heuristic
+        self.heuristic = self.heuristic_function(targetList, boxList, strategy)
         self.value = self.calculate_value(strategy)
     '''
         Method Name: __eq__
@@ -46,4 +49,33 @@ class Node:
             value = 1 / (float(self.depth) + 1.00)
         elif strategy == 'UC':
             value = float(self.cost)
+        elif strategy == 'GREEDY':
+            value = self.heuristic
+        elif strategy == 'A*':
+            value = float(self.cost) + self.heuristic
         return value
+
+    '''
+        Method Name: heuristic_function
+        Name of the original author: David Muñoz Escribano
+        Description: Calculates the heuristic value of the node. It calculates the sum of the manhattan distances
+        of the boxes to the targets.
+        Return value: float, heuristic value of the node
+    '''
+    def heuristic_function(self, boxList, targetList, strategy) -> float:
+        hManhattan = 0  
+        values = []
+
+        if strategy == 'GREEDY' or strategy == 'A*':
+            for i in range(len(boxList)):
+                minHmanhattan = abs(targetList[0][0] - boxList[i][0]) + abs(targetList[0][1] - boxList[i][1])
+                for target in targetList:
+                    hManhattan = abs(target[0] - boxList[i][0]) + abs(target[1] - boxList[i][1])
+                    if hManhattan < minHmanhattan:
+                        minHmanhattan = hManhattan
+                values.append(minHmanhattan)
+            
+            hManhattan = sum(values)
+
+        return hManhattan
+            
