@@ -57,3 +57,26 @@ Se implementan los algoritmos voraz y A*, para utilizarlos se deben añadir al i
 En el módulo `node.py` se han implementado las nuevas funcionalidades, nueva forma para calcular el valor siguiendo la heurística y el algoritmo especifiado en `calculate_value()` y una nueva función: `heuristic_function`.
   * `heuristic_function`:  Para calcular la heurística se suma la distancia mínima de manhattan de todas las cajas a los objetivos, por parámetros se le pasa la `boxList` y la `targetList`. La lista de las cajas que se le pasa es la de la función sucesora. La fórmula para calcular la distancia es la siguiente: $Dmanhattan((fila,columna))=|Tfila-Bfila|+|Tcolumna-Bcolumna|$
 
+# Manual de usuario
+Para hacer uso de este software es necesario tener instalado *Python* y saber la funcionalidad de cada opción que se añade a la ejecución, se explica a continuación:  
+\- Si se añade **T1**, el programa devuelve una lista con la posición de los elementos del nivel y su identificador.  
+\- Si se añade **T2S**, se muestra por pantalla el movimiento sucesor del nivel (movimiento arriba, derecha, abajo o izquierda del jugador o la caja).  
+\- Si se añade **T2T**, devuelve la función objetivo del nivel, un valor booleano de si el nivel está resuelto o no.  
+\- Si se añade **T3**, resuelve el nivel utilizando el algoritmo especificado por parámetro. Muestra por pantalla una lista del camino a la solución desde el inicio del nivel.  
+
+Para las opciones **T1**, **T2S** y **T2T** solo se añade el parámetro nivel.
+  * `-l` o `--level`: Indica que el parámetro es el nivel sobre el que se va a operar. Debe ir entrecomillado.
+Para **T3** se admite el anterior y los siguientes parámetros:
+  * `-s`: La estrategia a usar para la resolución del nivel (BFS, DFS, UC, GREEDY o A*)
+  * `-d`: La profundidad máxima a la que puede llegar el algoritmo.
+    
+## Ejemplos de uso
+`python sokoban.py T1 -l '###########\n####  @#  #\n#### #    #\n####  $#  #\n# $.  .## #\n#   ###  $#\n#   ###  .#\n###########'`
+`python sokoban.py T2S -l '###########\n####  @#  #\n#### #    #\n####  $#  #\n# $.  .## #\n#   ###  $#\n#   ###  .#\n###########'`
+`python sokoban.py T2T -l '###########\n####  @#  #\n#### #    #\n####  $#  #\n# $.  .## #\n#   ###  $#\n#   ###  .#\n###########'`
+`python sokoban.py T2T -l '#####\n#*@ #\n# * #\n#####'`
+`python sokoban.py T3 -l '###########\n####  @#  #\n#### #    #\n####  $#  #\n# $.  .## #\n#   ###  $#\n#   ###  .#\n###########' -s BFS -d 100`
+`python sokoban.py T3 -l '###########\n####  @#  #\n#### #    #\n####  $#  #\n# $.  .## #\n#   ###  $#\n#   ###  .#\n###########' -s A* -d 100`
+
+# Opinión personal
+Mi valoración sobre este proyecto es buena, puesto que se han desarrollado los algoritmos vistos en clase, ha sido una buena manera de seguirlos. Al ser relacionado con un juego me ha parecido muy entretenido y he disfrutado haciéndolo, en general. Me ha gustado la metodología iterativa que se ha llevado a cabo. 
