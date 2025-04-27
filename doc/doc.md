@@ -4,18 +4,18 @@ En esta primera tarea el objetivo es representar el nivel e identificar la funci
 Los tres módulos que se han desarrollado en esta primera tarea son `sokoban.py`, `map.py` y `parser.py`.
 Añadiendo la opcion 'T1' en el comando de ejecución de sokoban, muestra por pantalla la posición de cada elemento del juego.
 
-* sokoban.py
+* sokoban.py  
 Este es el módulo principal, en él se recogen los parámetros introducidos por teclado y se realizan las llamadas correspondientes a las opciones elegidas.
 
-* parser.py
+* parser.py  
 Es el encargado de parsear las opciones y parametros para encapsularlos en un objeto parser. También es el encargado de mostrar un mensaje de error en caso de no introducir bien las opciones.
 
-* map.py
+* map.py  
 El módulo que contiene la clase Map, dónde se desarrollan las funcionalidades del proyecto.  
   - Map    
     * `__init__`: Es el método constructor, requiere del parámetro "level" para inicializarse, al crear un objeto Map se inicializan los atributos `level`, `ID`, `rows`, `columns`, `wallList`,`player`, `boxList`, `targetList` y `map`.  
 
-    * `define_grid`: Cuenta el número de filas y columnas que tiene el nivel y retorna un grid inicializado con todas las posiciones a ' '. Cada caracter encontrado hasta el salto de línea (\n) es una columna, por lo tanto el número de columnas (NC) se incrementa en 1; por cada salto de línea se incrementa en 1 el número de filas (NR), también en cada salto se compara el número de columnas contado en esa iteración con el almacenado, en caso de ser mayor, se almacena en la variable maxNC. De esta manera se define un grid para no dejar ningún carácter fuera de límites.
+    * `define_grid`: Cuenta el número de filas y columnas que tiene el nivel y retorna un grid inicializado con todas las posiciones vacías. Cada caracter encontrado hasta el salto de línea (\n) es una columna, por lo tanto el número de columnas (NC) se incrementa en 1 por cada caracter. Por cada salto de línea se incrementa en 1 el número de filas (NR), también en cada salto se compara el número de columnas contado en esa iteración con el almacenado, en caso de ser mayor, se almacena en la variable maxNC. De esta manera se define un grid para no dejar ningún carácter fuera de límites.
   
     * `make_level`: En primera instancia llama al método `define_grid`, posteriormente itera sobre la cadena 'level', diferenciando los caracteres, asignandoles una posición (i,j) en el grid y almacenando sus posiciones en los atributos del objeto. Por último almacena el resultado en el atributo map y genera un identificador del nivel.
   
@@ -34,7 +34,7 @@ retorna una lista con elementos <<u|U|r|R|d|D|l|L>, posicion_sucesor(i,j) , posi
 
 ### T2T
 La meta de esta tarea es mostrar el resultado de la función OBJETIVO para el nivel. Se ha desarrollado el método `objective`.
-* `objective`, comprueba que no exista ningún objetivo en el nivel, en caso de que exista alguna caja ('$') se considerará que el objetivo no está cumplido. Muestra por pantalla el resultado.  
+* `objective`, comprueba que no exista ningún objetivo en el nivel, en caso de que exista alguna caja ('$') se considerará que el objetivo no está cumplido. Como resultado devuelve un booleano.
 
 ## Tarea 3  
 ### T3
@@ -45,7 +45,7 @@ Al ejecutar el nivel en la paleta de comandos se debe añadir el nivel, la estra
       * `calculate_value`: Calcula el valor (`value`) del nodo dependiendo de la estrategia utilizada.  
       * `check_visited`: Comprueba que el nodo no ha sido visitado con anterioridad.  
 Las nuevas funcionalidades desarrolladas en `map.py` son las siguientes:  
-  * `solve_sokoban`: Contiene el algoritmo de búsqueda para la solución del nivel, se utilizan 2 listas `fringe`, en la que se añaden los nodos a visitar y `visited`, en la que se añaden los estados de los nodos ya visitados. Para llevar a cabo el algoritmo lo primero de todo es añadir el nodo cero a la frontera (estado inicial del nivel), mientras la frontera no este vacía y no sea solución se ejecuta un bucle while, se saca el primer elemento de la frontera y se actualiza el mapa con las posiciones del nodo, posteriormente se comprueba si es objetivo, en caso de que sí, el nodo es solución y finaliza el bucle para después realizar el camino solución, en el caso de que no, se comprueba que el nodo no esté visitado y que la profundidad sea la adecuada, cumpliéndose esta condición el estado del nodo se añade a `visited`, se expande y estos nuevos nodos se añaden a la frontera. En caso de no encontrar la solución se mostrará un mensaje por pantalla. Para el algoritmo DFS, los nodos expandidos se colocan en primera posición, mientras que para el algoritmo BFS y UC se colocan después de los que ya están en `fringe`.
+  * `solve_sokoban`: Contiene el algoritmo de búsqueda para la solución del nivel, se utilizan 2 listas: `fringe`, en la que se añaden los nodos a visitar y `visited`, en la que se añaden los estados de los nodos ya visitados. Para llevar a cabo el algoritmo lo primero de todo es añadir el nodo cero a la frontera (estado inicial del nivel), mientras la frontera no este vacía y no sea solución se ejecuta un bucle while, se saca el primer elemento de la frontera y se actualiza el mapa con las posiciones del nodo, posteriormente se comprueba si es objetivo, en caso de que sí, el nodo es solución y finaliza el bucle para después realizar el camino solución, en el caso de que no, se comprueba que el nodo no esté visitado y que la profundidad sea la adecuada, cumpliéndose esta condición el estado del nodo se añade a `visited`, se expande y estos nuevos nodos se añaden a la frontera. En caso de no encontrar la solución se mostrará un mensaje por pantalla. Para el algoritmo DFS, los nodos expandidos se colocan en primera posición, mientras que para el algoritmo BFS y UC se colocan después de los que ya están en `fringe`.
   * `make_path`: Construye el camino solución, desde el nodo objetivo el método comprueba que el atributo `parent` no es None, es decir, que no es el nodo cero. En cada iteración se añade el nodo a la lista path, cuando `parent` es None, se añade por útlimo este nodo y se llama a imprimir por pantalla.
   * `print_path`: Formatea e imprime por pantalla el resultado de la búsqueda.
   * `expand`: A partir de los sucesores del nivel genera los nuevos nodos de expansión, por cada sucesor, comprueba que no está visitado y genera un nuevo nodo con un identificador único.
@@ -66,17 +66,18 @@ Para hacer uso de este software es necesario tener instalado *Python* y saber la
 
 Para las opciones **T1**, **T2S** y **T2T** solo se añade el parámetro nivel.
   * `-l` o `--level`: Indica que el parámetro es el nivel sobre el que se va a operar. Debe ir entrecomillado.
+    
 Para **T3** se admite el anterior y los siguientes parámetros:
   * `-s`: La estrategia a usar para la resolución del nivel (BFS, DFS, UC, GREEDY o A*)
   * `-d`: La profundidad máxima a la que puede llegar el algoritmo.
     
 ## Ejemplos de uso
-`python sokoban.py T1 -l '###########\n####  @#  #\n#### #    #\n####  $#  #\n# $.  .## #\n#   ###  $#\n#   ###  .#\n###########'`
-`python sokoban.py T2S -l '###########\n####  @#  #\n#### #    #\n####  $#  #\n# $.  .## #\n#   ###  $#\n#   ###  .#\n###########'`
-`python sokoban.py T2T -l '###########\n####  @#  #\n#### #    #\n####  $#  #\n# $.  .## #\n#   ###  $#\n#   ###  .#\n###########'`
-`python sokoban.py T2T -l '#####\n#*@ #\n# * #\n#####'`
-`python sokoban.py T3 -l '###########\n####  @#  #\n#### #    #\n####  $#  #\n# $.  .## #\n#   ###  $#\n#   ###  .#\n###########' -s BFS -d 100`
-`python sokoban.py T3 -l '###########\n####  @#  #\n#### #    #\n####  $#  #\n# $.  .## #\n#   ###  $#\n#   ###  .#\n###########' -s A* -d 100`
+`python sokoban.py T1 -l '###########\n####  @#  #\n#### #    #\n####  $#  #\n# $.  .## #\n#   ###  $#\n#   ###  .#\n###########'`  
+`python sokoban.py T2S -l '###########\n####  @#  #\n#### #    #\n####  $#  #\n# $.  .## #\n#   ###  $#\n#   ###  .#\n###########'`  
+`python sokoban.py T2T -l '###########\n####  @#  #\n#### #    #\n####  $#  #\n# $.  .## #\n#   ###  $#\n#   ###  .#\n###########'`  
+`python sokoban.py T2T -l '#####\n#*@ #\n# * #\n#####'`  
+`python sokoban.py T3 -l '###########\n####  @#  #\n#### #    #\n####  $#  #\n# $.  .## #\n#   ###  $#\n#   ###  .#\n###########' -s BFS -d 100`  
+`python sokoban.py T3 -l '###########\n####  @#  #\n#### #    #\n####  $#  #\n# $.  .## #\n#   ###  $#\n#   ###  .#\n###########' -s A* -d 100`  
 
 # Opinión personal
-Mi valoración sobre este proyecto es buena, puesto que se han desarrollado los algoritmos vistos en clase, ha sido una buena manera de seguirlos. Al ser relacionado con un juego me ha parecido muy entretenido y he disfrutado haciéndolo, en general. Me ha gustado la metodología iterativa que se ha llevado a cabo. 
+Mi valoración sobre este proyecto es positiva. Considero que ha sido una buena oportunidad para aplicar y consolidar los algoritmos estudiados en clase. El hecho de estar relacionado con un juego ha resultado muy motivador, haciendo que el desarrollo del proyecto fuera ameno y agradable. Además, he disfrutado del proceso en general. También destaco de forma positiva la metodología iterativa empleada, ya que ha permitido avanzar de manera progresiva y estructurada en el desarrollo.
