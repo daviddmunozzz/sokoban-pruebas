@@ -280,7 +280,7 @@ class Map:
         cost = 0.00
         #heuristic = 0.00
         
-        fringe.append(Node(node_ID[0], self.ID, None, 'NOTHING', depth, cost, self.dictionary[self.ID][1], self.targetList, strategy)) # Insert the root node in the fringe
+        fringe.append(Node(node_ID[0], self.ID, None, 'NOTHING', depth, cost, self.targetList, self.dictionary[self.ID][1], strategy)) # Insert the root node in the fringe
         
         while fringe and not solution:
             node = fringe.pop(0)
@@ -342,8 +342,8 @@ class Map:
         
         for suc in S: # suc = ('U', ID, cost)
             node_ID[0] += 1
-            if suc[1] not in visited:                                                                                                                                
-                nodes.append(Node(node_ID[0], suc[1], node, suc[0], node.depth +1, node.cost + 1.00, self.dictionary[suc[1]][1], self.targetList, strategy))
+            #if suc[1] not in visited:                                                                                                                                
+            nodes.append(Node(node_ID[0], suc[1], node, suc[0], node.depth +1, node.cost + 1.00, self.dictionary[suc[1]][1], self.targetList, strategy))
                 
         return nodes        
     
