@@ -342,8 +342,8 @@ class Map:
         
         for suc in S: # suc = ('U', ID, cost)
             node_ID[0] += 1
-            #if suc[1] not in visited:                                                                                                                                
-            nodes.append(Node(node_ID[0], suc[1], node, suc[0], node.depth +1, node.cost + 1.00, self.dictionary[suc[1]][1], self.targetList, strategy))
+            if suc[1] not in visited:                                                                                                                                
+                nodes.append(Node(node_ID[0], suc[1], node, suc[0], node.depth +1, node.cost + 1.00, self.dictionary[suc[1]][1], self.targetList, strategy))
                 
         return nodes        
     
